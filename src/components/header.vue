@@ -57,6 +57,7 @@ const router = useRouter();
 const handleCommand = (command) => {
 	if (command == 'loginout') {
 		localStorage.removeItem('ms_username');
+		localStorage.removeItem('token');
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');

@@ -56,17 +56,16 @@ export default {
     const submitForm = () => {
       loginForm.value.validate(() => {
         login(param.username, param.password).then((res) => {
-          console.log(res)
-          if (res.data.code === 0){
+          if (res.data.code === 0) {
             ElMessage.success('登录成功');
             localStorage.setItem('ms_username', param.username);
+            localStorage.setItem('token',res.data.data.token);
             const keys = permiss.defaultList[param.username === 'admin' ? 'admin' : 'user'];
             permiss.handleSet(keys);
             localStorage.setItem('ms_keys', JSON.stringify(keys));
-            localStorage.setItem('token', JSON.stringify(res.data.data.token));
             router.push('/');
-          }else{
-            ElMessage.error('登录失败'+res.data.msg);
+          } else {
+            ElMessage.error('登录失败' + res.data.msg);
           }
         });
       });

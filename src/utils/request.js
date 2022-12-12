@@ -1,9 +1,8 @@
 // 在src目录下创建文件夹utils，并创建文件request.js，用来存储网络请求对象axios
 
 import axios from "axios";
-import qs from "querystring"
 
-const errorHandle = (status, info) => {
+const errorHandle = (status) => {
     switch (status) {
         case 400:
             console.log("语义有误");
@@ -24,7 +23,6 @@ const errorHandle = (status, info) => {
             console.log("服务器无响应");
             break;
         default:
-            console.log(info);
             break;
 
     }
@@ -44,20 +42,13 @@ instance.interceptors.request.use(
     //config是定义成功的函数
     // config 包含着网络请求的所有信息
     config => {
-        if (localStorage.id_token) {
-            config.headers['token'] = localStorage.id_token;
+        if (localStorage.getItem("token")) {
+            console.log(localStorage.getItem("token"))
+            config.headers['token'] = localStorage.token;
         }
         // post请求需要转换格式，要单独处理。如果
         // 字典传递进去抛出"参数缺失,请提供完整参数"的错误,请参考35博客
-        if (config.method == "post") {
-            config.data = qs.stringify(config.data)
             return config
-        }
-        // get请求
-        if (config.method == 'get') {
-            config.data = qs.stringify(config.data)
-            return config
-        }
     },
     // error 定义失败的函数
     error => Promise.reject(error)
@@ -65,10 +56,13 @@ instance.interceptors.request.use(
 
 // 获取数据之前的拦截器
 instance.interceptors.response.use(
-    response => response.status === 200 ? Promise.resolve(response) : Promise.reject(response),
-    error => {
-        const { response } = error;
-        errorHandle(response.status, response.info)
+    function (response) {
+        return response;
+    },
+    function (error) {
+        // 对响应错误做点什么
+        errorHandle(error.status)
+        return Promise.reject(error);
     }
 )
 

@@ -9,11 +9,10 @@
     </div>
     <div class="container">
       <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+        <el-table-column prop="userId" label="用户id"></el-table-column>
         <el-table-column prop="userName" label="用户名"></el-table-column>
-        <el-table-column label="手机号">
-          <template #default="scope">{{ scope.row.money }}</template>
-        </el-table-column>
-        <el-table-column prop="sex" label="性别"></el-table-column>
+        <el-table-column prop="phone" label="手机号"></el-table-column>
+        <el-table-column prop="avatar" label="性别"></el-table-column>
         <el-table-column label="操作" width="220" align="center">
           <template #default="scope">
             <el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
@@ -37,11 +36,11 @@
     <!-- 编辑弹出框 -->
     <el-dialog title="编辑" v-model="editVisible" width="30%">
       <el-form label-width="70px">
-        <el-form-item label="用户名">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="电话">
+          <el-input v-model="form.phone"></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-input v-model="form.sex"></el-input>
+          <el-input v-model="form.avatar"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -58,7 +57,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
-import {fetchData, findUser} from '../api/index';
+import {fetchData, findUser, userChange} from '../api/index';
 
 const query = reactive({
   sex: '',
@@ -70,10 +69,9 @@ const tableData = ref([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
-  findUser(query.pageIndex, query.pageSize,"").then(res => {
-    console.log("查询中")
+  findUser(query.pageIndex, query.pageSize, "").then(res => {
     if (res.data.code === 0) {
-      tableData.value = res.data
+      tableData.value = res.data.data
       pageTotal.value = res.data.pageTotal || 50
       ElMessage.success(res.data.msg);
     } else {
@@ -98,54 +96,30 @@ const handlePageChange = (val) => {
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
 let form = reactive({
-  name: '',
+  phone: '',
   sex: ''
 });
 let idx = -1;
 const handleEdit = (index, row) => {
   idx = index;
-  form.name = row.name;
-  form.sex = row.sex;
+  form.phone = row.phone;
+  form.avatar = row.avatar;
   editVisible.value = true;
 };
 const saveEdit = () => {
-  editVisible.value = false;
-  ElMessage.success(`修改第 ${idx + 1} 行成功`);
-  tableData.value[idx].name = form.name;
-  tableData.value[idx].sex = form.sex;
+  userChange("", form.avatar, form.phone,"").then(res => {
+    if (res.data.code === 0) {
+      ElMessage.success(`修改第 ${idx + 1} 行成功`);
+      if (form.phone !== "") {
+        tableData.value[idx].phone = form.phone;
+      }
+      if (form.sex !== "") {
+        tableData.value[idx].avatar = form.avatar;
+      }
+    } else {
+      ElMessage.success(`修改失败` + res.data.msg);
+    }
+    editVisible.value = false;
+  })
 };
 </script>
-
-<style scoped>
-.handle-box {
-  margin-bottom: 20px;
-}
-
-.handle-select {
-  width: 120px;
-}
-
-.handle-input {
-  width: 300px;
-}
-
-.table {
-  width: 100%;
-  font-size: 14px;
-}
-
-.red {
-  color: #ff0000;
-}
-
-.mr10 {
-  margin-right: 10px;
-}
-
-.table-td-thumb {
-  display: block;
-  margin: auto;
-  width: 40px;
-  height: 40px;
-}
-</style>

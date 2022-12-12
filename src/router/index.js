@@ -44,7 +44,7 @@ const routes = [
                 component: () => import( /* webpackChunkName: "tabs" */ "../views/reserve.vue")
             }, {
                 path: "/icon",
-                name: "donate",
+                name: "icon",
                 meta: {
                     title: '车辆运行信息',
                     permiss: '5'
@@ -53,7 +53,7 @@ const routes = [
             },
             {
                 path: "/RouteTable",
-                name: "upload",
+                name: "scheduleTable",
                 meta: {
                     title: '线路',
                     permiss: '6'
