@@ -28,27 +28,20 @@
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
             </div>
-            <!-- 排班表单 -->
-            <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-                <el-table-column prop="scheduleId" label="排班ID"  align="center"></el-table-column>
-                <el-table-column prop="startLocation" label="始发校区" align="center"></el-table-column>
-                <el-table-column prop="endLocation" label="终点校区" align="center"></el-table-column>
-                <el-table-column prop="routeId" label="路线ID" align="center"></el-table-column>
-                <el-table-column label="发车时间" align="center">
-                    <template #default="scope">
-                        <el-tag>
-                            {{ scope.row.startTime }}
-                        </el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="date" label="发车星期" align="center">
-                    <template #default="scope">
-                        <el-tag v-if="scope.row.date == ''" type="info">没有日期</el-tag>
-                        <el-tag v-else v-for="day in scope.row.date" :key="day" type="success" round>{{ day }}</el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="busId" label="车辆ID" align="center"></el-table-column>
-                <el-table-column prop="seatInfo" label="座位ID" align="center"></el-table-column>
+          <!-- 排班表单 -->
+          <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+            <el-table-column prop="scheduleId" label="排班ID"  align="center"></el-table-column>
+            <el-table-column prop="startLocation" label="始发站" align="center"></el-table-column>
+            <el-table-column prop="endLocation" label="终点站" align="center"></el-table-column>
+            <el-table-column prop="routeId" label="路线ID" align="center"></el-table-column>
+            <el-table-column label="发车时间" align="center">
+              <template #default="scope">
+                <el-tag>
+                  {{ scope.row.startTime }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="busId" label="车辆ID" align="center"></el-table-column>
                 <!-- 操作栏 -->
                 <el-table-column label="操作" width="180" align="center">
                     <template #default="scope">
@@ -65,58 +58,6 @@
                     :page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
-
-        <!-- 编辑弹出框 无校验 -->
-        <el-dialog title="编辑" v-model="editVisible" width="30%">
-            <el-form label-width="100px">
-                <el-form-item label="排班ID：">
-                    <el-input v-model="form.scheduleId" disabled placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="始发校区：">
-                    <el-select v-model="form.startLocation" placeholder="始发校区" class="handle-select mr10">
-                        <el-option v-for="data in campusData" :key="data.campusId" :label="data.campusName" :value="data.campusName" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="终点校区：">
-                    <el-select v-model="form.endLocation" placeholder="终点校区" class="handle-select mr10">
-                        <el-option v-for="data in campusData" :key="data.campusId" :label="data.campusName" :value="data.campusName" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="路线ID：">
-                    <el-select v-model="form.routeId" placeholder="请选择路线号" class="handle-select mr10">
-                        <el-option v-for="route in routeData" :key="route.routeId" :label="route.routeId" :value="route.routeId" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="发车时间：">
-                    <el-time-select v-model="form.startTime" start="06:00" step="00:10" end="15:30" placeholder="Select time"/>
-                </el-form-item>
-                <el-form-item label="发车星期：">
-                    <el-checkbox-group v-model="form.date" border>
-                        <el-checkbox label="1" />
-                        <el-checkbox label="2" />
-                        <el-checkbox label="3" />
-                        <el-checkbox label="4" />
-                        <el-checkbox label="5" />
-                        <el-checkbox label="6" />
-                        <el-checkbox label="7" />
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="车辆ID：">
-                    <el-select v-model="form.busId" placeholder="终点校区" class="handle-select mr10">
-                        <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busName" :value="bus.busId" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="座位号：">
-                    <el-input v-model="form.seatInfo" placeholder="" disabled></el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="editVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit">确 定</el-button>
-                </span>
-            </template>
-        </el-dialog>
 
         <!-- 添加弹出框 有校验 -->
         <el-dialog title="添加排班" v-model="addVisible" width="30%">
@@ -142,24 +83,13 @@
                 <el-form-item label="发车时间：">
                     <el-time-select v-model="ruleForm.startTime" start="06:00" step="00:10" end="15:30" placeholder="Select time"/>
                 </el-form-item>
-                <el-form-item label="发车星期：">
-                    <el-checkbox-group v-model="ruleForm.date" border>
-                        <el-checkbox label="1" />
-                        <el-checkbox label="2" />
-                        <el-checkbox label="3" />
-                        <el-checkbox label="4" />
-                        <el-checkbox label="5" />
-                        <el-checkbox label="6" />
-                        <el-checkbox label="7" />
-                    </el-checkbox-group>
-                </el-form-item>
                 <el-form-item label="车辆ID：">
                     <el-select v-model="ruleForm.busId" placeholder="终点校区" class="handle-select mr10">
                         <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busName" :value="bus.busId" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="座位号：">
-                    <el-input v-model="ruleForm.seatInfo" placeholder="" disabled></el-input>
+                <el-form-item label="日期：">
+                    <el-input v-model="ruleForm.dateInfo" placeholder="" disabled></el-input>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -212,7 +142,7 @@ export default {
             startTime: "",
             date: [],
             busId: "",
-            seatInfo: [],
+            dateInfo: [],
         });
         // 规则校验表单
         const ruleForm = reactive({
@@ -223,7 +153,7 @@ export default {
             startTime: "",
             date: [],
             busId: "",
-            seatInfo: [],
+            dateInfo: [],
         });
         const deleteParam = reactive({
              scheduleId:"",
@@ -366,8 +296,7 @@ export default {
         const saveCreate = () => {
             addVisible.value = false;
             console.log(ruleForm)
-            ruleForm.date = ruleForm.date.join(",")
-            ruleForm.seatInfo = ruleForm.seatInfo.join(",")
+            ruleForm.dateInfo = ruleForm.dateInfo.join(",")
             addScheduleData(ruleForm);
             ElMessage.success(`添加新用户成功`);
             getFormData();
