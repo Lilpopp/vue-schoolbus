@@ -14,7 +14,7 @@
 		</div>
 	</div>
 </template>
-<script setup lang="ts">
+<script setup>
 import { useSidebarStore } from '../store/sidebar';
 import { useTagsStore } from '../store/tags';
 import vHeader from '../components/header.vue';

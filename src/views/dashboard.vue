@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import Schart from "vue-schart";
+import * as Schart from "vue-schart";
 import { reactive } from "vue";
 export default {
     name: "dashboard",

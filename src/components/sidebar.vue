@@ -50,7 +50,7 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRoute } from 'vue-router';

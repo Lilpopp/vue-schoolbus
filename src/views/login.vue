@@ -31,26 +31,21 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, reactive } from 'vue';
 import { useTagsStore } from '../store/tags';
 import { usePermissStore } from '../store/permiss';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
-interface LoginInfo {
-	username: string;
-	password: string;
-}
 
 const router = useRouter();
-const param = reactive<LoginInfo>({
+const param = reactive({
 	username: 'admin',
 	password: 'admin'
 });
 
-const rules: FormRules = {
+const rules = {
 	username: [
 		{
 			required: true,
@@ -61,10 +56,10 @@ const rules: FormRules = {
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
 const permiss = usePermissStore();
-const login = ref<FormInstance>();
-const submitForm = (formEl: FormInstance | undefined) => {
+const login = ref();
+const submitForm = (formEl) => {
 	if (!formEl) return;
-	formEl.validate((valid: boolean) => {
+	formEl.validate((valid) => {
 		if (valid) {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.username);

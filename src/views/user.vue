@@ -68,7 +68,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="user">
+<script setup  name="user">
 import { reactive, ref } from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
@@ -86,20 +86,20 @@ const avatarImg = ref(avatar);
 const imgSrc = ref('');
 const cropImg = ref('');
 const dialogVisible = ref(false);
-const cropper: any = ref();
+const cropper = ref();
 
 const showDialog = () => {
 	dialogVisible.value = true;
 	imgSrc.value = avatarImg.value;
 };
 
-const setImage = (e: any) => {
+const setImage = (e) => {
 	const file = e.target.files[0];
 	if (!file.type.includes('image/')) {
 		return;
 	}
 	const reader = new FileReader();
-	reader.onload = (event: any) => {
+	reader.onload = (event) => {
 		dialogVisible.value = true;
 		imgSrc.value = event.target.result;
 		cropper.value && cropper.value.replace(event.target.result);
