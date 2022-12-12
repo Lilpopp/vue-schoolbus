@@ -1,15 +1,9 @@
 import { defineStore } from 'pinia';
 
-interface ListItem {
-	name: string;
-	path: string;
-	title: string;
-}
-
 export const useTagsStore = defineStore('tags', {
 	state: () => {
 		return {
-			list: <ListItem[]>[]
+			list: []
 		};
 	},
 	getters: {
@@ -21,19 +15,19 @@ export const useTagsStore = defineStore('tags', {
 		}
 	},
 	actions: {
-		delTagsItem(index: number) {
+		delTagsItem(index) {
 			this.list.splice(index, 1);
 		},
-		setTagsItem(data: ListItem) {
+		setTagsItem(data) {
 			this.list.push(data);
 		},
 		clearTags() {
 			this.list = [];
 		},
-		closeTagsOther(data: ListItem[]) {
+		closeTagsOther(data) {
 			this.list = data;
 		},
-		closeCurrentTag(data: any) {//关闭标签
+		closeCurrentTag(data) {//关闭标签
 			for (let i = 0, len = this.list.length; i < len; i++) {
 				const item = this.list[i];
 				if (item.path === data.$route.fullPath) {

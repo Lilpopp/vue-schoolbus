@@ -31,14 +31,14 @@
 		</div>
 	</div>
 </template>
-<script setup lang="ts">
+<script setup>
 import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 
-const username: string | null = localStorage.getItem('ms_username');
-const message: number = 2;
+const username = localStorage.getItem('ms_username');
+const message= 2;
 
 const sidebar = useSidebarStore();
 // 侧边栏折叠
@@ -54,7 +54,7 @@ onMounted(() => {
 
 // 用户名下拉菜单选择事件
 const router = useRouter();
-const handleCommand = (command: string) => {
+const handleCommand = (command) => {
 	if (command == 'loginout') {
 		localStorage.removeItem('ms_username');
 		router.push('/login');

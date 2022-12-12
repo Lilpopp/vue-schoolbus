@@ -1,4 +1,4 @@
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -25,7 +25,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 const permiss = usePermissStore()
 app.directive('permiss', {
     mounted(el, binding) {
-        if(!permiss.key.includes(String(binding.value))){
+        if (!permiss.key.includes(String(binding.value))) {
             el['hidden'] = true;
         }
     }

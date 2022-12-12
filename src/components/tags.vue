@@ -30,19 +30,19 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useTagsStore } from '../store/tags';
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const isActive = (path: string) => {
+const isActive = (path) => {
 	return path === route.fullPath;
 };
 
 const tags = useTagsStore();
 // 关闭单个标签
-const closeTags = (index: number) => {
+const closeTags = (index) => {
 	const delItem = tags.list[index];
 	tags.delTagsItem(index);
 	const item = tags.list[index] ? tags.list[index] : tags.list[index - 1];
@@ -54,7 +54,7 @@ const closeTags = (index: number) => {
 };
 
 // 设置标签
-const setTags = (route: any) => {
+const setTags = (route) => {
 	const isExist = tags.list.some(item => {
 		return item.path === route.fullPath;
 	});
@@ -84,7 +84,7 @@ const closeOther = () => {
 	});
 	tags.closeTagsOther(curItem);
 };
-const handleTags = (command: string) => {
+const handleTags = (command) => {
 	command === 'other' ? closeOther() : closeAll();
 };
 

@@ -22,20 +22,15 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="permission">
+<script setup  name="permission">
 import { ref } from 'vue';
 import { ElTree } from 'element-plus';
 import { usePermissStore } from '../store/permiss';
 
-const role = ref<string>('admin');
+const role = ref('admin');
 
-interface Tree {
-	id: string;
-	label: string;
-	children?: Tree[];
-}
 
-const data: Tree[] = [
+const data = [
 	{
 		id: '1',
 		label: '系统首页'
@@ -96,7 +91,7 @@ const data: Tree[] = [
 const permiss = usePermissStore();
 
 // 获取当前权限
-const checkedKeys = ref<string[]>([]);
+const checkedKeys = ref([]);
 const getPremission = () => {
 	// 请求接口返回权限
 	checkedKeys.value = permiss.defaultList[role.value];
@@ -104,14 +99,14 @@ const getPremission = () => {
 getPremission();
 
 // 保存权限
-const tree = ref<InstanceType<typeof ElTree>>();
+const tree = ref();
 const onSubmit = () => {
 	// 获取选中的权限
-	console.log(tree.value!.getCheckedKeys(false));
+	console.log(tree.value.getCheckedKeys(false));
 };
 
-const handleChange = (val: string[]) => {
-	tree.value!.setCheckedKeys(permiss.defaultList[role.value]);
+const handleChange = (val) => {
+	tree.value.setCheckedKeys(permiss.defaultList[role.value]);
 };
 </script>
 
