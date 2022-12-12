@@ -45,7 +45,7 @@ instance.interceptors.request.use(
     // config 包含着网络请求的所有信息
     config => {
         if (localStorage.id_token) {
-            config.headers.Authorization = "token" + localStorage.id_token;
+            config.headers['token'] = localStorage.id_token;
         }
         // post请求需要转换格式，要单独处理。如果
         // 字典传递进去抛出"参数缺失,请提供完整参数"的错误,请参考35博客
@@ -55,6 +55,7 @@ instance.interceptors.request.use(
         }
         // get请求
         if (config.method == 'get') {
+            config.data = qs.stringify(config.data)
             return config
         }
     },

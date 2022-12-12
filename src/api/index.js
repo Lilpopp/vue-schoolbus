@@ -1,6 +1,7 @@
 import request from '../utils/request';
 import axios from "axios";
 import path from "./path"
+//登陆
 export const login = (username,password) => {
     return axios({
         headers: {
@@ -14,19 +15,54 @@ export const login = (username,password) => {
         }
     });
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
+//注册
+export const register = (username,password,sex,phone) => {
+    return axios({
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        url: path.user+"/register",
+        method: 'post',
+        data: {
+            "username":username,
+            "password":password,
+            "sex":sex,
+            "phone":phone,
+            "is_super":false
+        }
+    });
+};
+//修改信息
+export const change = (password,sex,phone) => {
+    return axios({
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        url: path.user+"/change",
+        method: 'post',
+        data: {
+            "password":password,
+            "sex":sex,
+            "phone":phone,
+            "is_super":false
+        }
+    });
+};
+//查看用户列表
+export const findUser = (pageNum,pageSize,userName) => {
+    return axios({
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        url: path.user+"/all",
+        method: 'get',
+        data: {
+            "page_num":pageNum,
+            "page_size":pageSize,
+            "user_name":userName
+        }
+    });
+};
 
 
 export const fetchData = query => {
