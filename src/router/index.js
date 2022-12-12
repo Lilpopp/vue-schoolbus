@@ -94,10 +94,23 @@ const routes = [
         component: () => import( /* webpackChunkName: "login" */ "../views/login.vue")
     },
 ];
-
 const router = createRouter({
     history: createWebHashHistory(),
     routes
 });
-
+router.beforeEach((to, from, next) => {
+    if (to.path.startsWith('/login')) {
+        window.localStorage.removeItem('token')
+        next()
+    } else {
+        let user = window.localStorage.getItem('token')
+        if (!user) {
+            next({
+                path: '/login'
+            })
+        } else {
+            next()
+        }
+    }
+});
 export default router;

@@ -1,4 +1,33 @@
 import request from '../utils/request';
+import axios from "axios";
+import path from "./path"
+export const login = (username,password) => {
+    return axios({
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        url: path.user+"/login",
+        method: 'post',
+        data: {
+            "username":username,
+            "password":password
+        }
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const fetchData = query => {
     return request({

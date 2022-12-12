@@ -1,146 +1,136 @@
 <template>
-	<div class="login-wrap">
-		<div class="ms-login">
-			<div class="ms-title">校车调度 系统</div>
-			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
-				<el-form-item prop="username">
-					<el-input v-model="param.username" placeholder="username">
-						<template #prepend>
-							<el-button :icon="User"></el-button>
-						</template>
-					</el-input>
-				</el-form-item>
-				<el-form-item prop="password">
-					<el-input
-						type="password"
-						placeholder="password"
-						v-model="param.password"
-						@keyup.enter="submitForm(login)"
-					>
-						<template #prepend>
-							<el-button :icon="Lock"></el-button>
-						</template>
-					</el-input>
-				</el-form-item>
-				<div class="login-btn">
-					<el-button type="primary" @click="submitForm(login)">登录</el-button>
-				</div>
-        <p class="login-tips"> 没有账号?点击注测</p><el-button @click="register">注册账号</el-button>
-        <el-dialog title="注册账号" v-model="reg" width="30%">
-          <el-form  label-width="100px">
-            <el-form-item label="用户名：">
-              <el-input placeholder="请填写用户名"></el-input>
-            </el-form-item>
-          </el-form>
-          <el-form  label-width="100px">
-            <el-form-item label="密码">
-              <el-input placeholder="请填写密码"></el-input>
-            </el-form-item>
-          </el-form>
-          <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="addVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveCreate">确 定</el-button>
-                </span>
-          </template>
-        </el-dialog>
-			</el-form>
-		</div>
-	</div>
+  <div class="login-wrap">
+    <div class="ms-login">
+      <div class="ms-title">校车调度 系统</div>
+      <el-form :model="param" :rules="rules" ref="loginForm" label-width="0px" class="ms-content">
+        <el-form-item prop="username">
+          <el-input v-model="param.username" placeholder="username">
+            <template #prepend>
+              <el-button :icon="User"></el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input
+              type="password"
+              placeholder="password"
+              v-model="param.password"
+              @keyup.enter="submitForm()"
+          >
+            <template #prepend>
+              <el-button :icon="Lock"></el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <div class="login-btn">
+          <el-button type="primary" @click="submitForm()">登录</el-button>
+        </div>
+        <p class="login-tips">Tips : 没有账号点击注册账号。</p>
+      </el-form>
+    </div>
+  </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue';
-import { useTagsStore } from '../store/tags';
-import { usePermissStore } from '../store/permiss';
-import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { Lock, User } from '@element-plus/icons-vue';
+<script>
+import {ref, reactive} from 'vue';
+import {useTagsStore} from '../store/tags';
+import {usePermissStore} from '../store/permiss';
+import {useRouter} from 'vue-router';
+import {ElMessage} from 'element-plus';
+import {Lock, User} from '@element-plus/icons-vue';
+import {login} from "../api";
 
-const reg = ref(false);
-const router = useRouter();
-const param = reactive({
-	username: 'admin',
-	password: 'admin'
-});
-
-const rules = {//保证账号密码不为空
-	username: [
-		{
-			required: true,
-			message: '请输入用户名',
-			trigger: 'blur'
-		}
-	],
-	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
-};
-const permiss = usePermissStore();
-const login = ref();
-const submitForm = (formEl) => {
-	if (!formEl) return;
-	formEl.validate((valid) => {
-		if (valid) {
-			ElMessage.success('登录成功');
-			localStorage.setItem('ms_username', param.username);
-			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
-			permiss.handleSet(keys);
-			localStorage.setItem('ms_keys', JSON.stringify(keys));
-			router.push('/');
-		} else {
-			ElMessage.error('登录成功');
-			return false;
-		}
-	});
-};
-
-const register = () => {
-  reg.value = true;
-};
-
-const tags = useTagsStore();
-tags.clearTags();
+export default {
+  setup() {
+    const router = useRouter();
+    const param = reactive({
+      username: '',
+      password: ''
+    });
+    const rules = {
+      username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+      password: [{required: true, message: '请输入密码', trigger: 'blur'}]
+    };
+    const loginForm = ref()
+    const permiss = usePermissStore();
+    const submitForm = () => {
+      loginForm.value.validate(() => {
+        login(param.username, param.password).then((res) => {
+          console.log(res)
+          if (res.data.code === 0){
+            ElMessage.success('登录成功');
+            localStorage.setItem('ms_username', param.username);
+            const keys = permiss.defaultList[param.username === 'admin' ? 'admin' : 'user'];
+            permiss.handleSet(keys);
+            localStorage.setItem('ms_keys', JSON.stringify(keys));
+            localStorage.setItem('token', JSON.stringify(res.data.data.token));
+            router.push('/');
+          }else{
+            ElMessage.error('登录失败'+res.data.msg);
+          }
+        });
+      });
+    };
+    const tags = useTagsStore();
+    tags.clearTags();
+    return {
+      param,
+      rules,
+      loginForm,
+      submitForm,
+      User,
+      Lock
+    };
+  }
+}
 </script>
 
 <style scoped>
 .login-wrap {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	background-image: url(../assets/img/login-bg.jpg);
-	background-size: 100%;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url(../assets/img/login-bg.jpg);
+  background-size: 100%;
 }
+
 .ms-title {
-	width: 100%;
-	line-height: 50px;
-	text-align: center;
-	font-size: 20px;
-	color: #fff;
-	border-bottom: 1px solid #ddd;
+  width: 100%;
+  line-height: 50px;
+  text-align: center;
+  font-size: 20px;
+  color: #fff;
+  border-bottom: 1px solid #ddd;
 }
+
 .ms-login {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 350px;
-	margin: -190px 0 0 -175px;
-	border-radius: 5px;
-	background: rgba(255, 255, 255, 0.3);
-	overflow: hidden;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 350px;
+  margin: -190px 0 0 -175px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
 }
+
 .ms-content {
-	padding: 30px 30px;
+  padding: 30px 30px;
 }
+
 .login-btn {
-	text-align: center;
+  text-align: center;
 }
+
 .login-btn button {
-	width: 100%;
-	height: 36px;
-	margin-bottom: 10px;
+  width: 100%;
+  height: 36px;
+  margin-bottom: 10px;
 }
+
 .login-tips {
-	font-size: 12px;
-	line-height: 30px;
-	color: #fff;
+  font-size: 12px;
+  line-height: 30px;
+  color: #fff;
 }
 </style>

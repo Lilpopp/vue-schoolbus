@@ -1,30 +1,74 @@
-import axios from 'axios';
+// 在src目录下创建文件夹utils，并创建文件request.js，用来存储网络请求对象axios
 
-const service = axios.create({
-    timeout: 5000
-});
+import axios from "axios";
+import qs from "querystring"
 
-service.interceptors.request.use(
-    (config) => {
-        return config;
-    },
-    (error) => {
-        console.log(error);
-        return Promise.reject();
+const errorHandle = (status, info) => {
+    switch (status) {
+        case 400:
+            console.log("语义有误");
+            break;
+        case 401:
+            console.log("服务器认证失败");
+            break;
+        case 403:
+            console.log("服务器拒绝访问");
+            break;
+        case 404:
+            console.log("地址错误");
+            break;
+        case 500:
+            console.log("服务器遇到意外");
+            break;
+        case 502:
+            console.log("服务器无响应");
+            break;
+        default:
+            console.log(info);
+            break;
+
     }
-);
+}
 
-service.interceptors.response.use(
-    (response) => {
-        if (response.status === 200) {
-            return response;
-        } else {
-            Promise.reject();
+// 创建一个属于自己的网络请求对象
+const instance = axios.create({
+    // 网络请求的公共配置
+    //请求的超时时间为5秒
+    timeout: 5000
+})
+
+// 定义拦截器，拦截器是最常用的。常用于获取数据之前和发送数据之前做一些处理
+
+// 发送数据之前的拦截器
+instance.interceptors.request.use(
+    //config是定义成功的函数
+    // config 包含着网络请求的所有信息
+    config => {
+        if (localStorage.id_token) {
+            config.headers.Authorization = "token" + localStorage.id_token;
+        }
+        // post请求需要转换格式，要单独处理。如果
+        // 字典传递进去抛出"参数缺失,请提供完整参数"的错误,请参考35博客
+        if (config.method == "post") {
+            config.data = qs.stringify(config.data)
+            return config
+        }
+        // get请求
+        if (config.method == 'get') {
+            return config
         }
     },
-    (error) => {
-        console.log(error);
-        return Promise.reject();
+    // error 定义失败的函数
+    error => Promise.reject(error)
+)
+
+// 获取数据之前的拦截器
+instance.interceptors.response.use(
+    response => response.status === 200 ? Promise.resolve(response) : Promise.reject(response),
+    error => {
+        const { response } = error;
+        errorHandle(response.status, response.info)
     }
-);
-export default service;
+)
+
+export default instance;// 导出网络请求
