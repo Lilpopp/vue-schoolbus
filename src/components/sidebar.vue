@@ -75,7 +75,7 @@ const items = [
 		permiss: '3'
 	},
 	{
-		icon: 'Edit',
+		icon: 'DocumentCopy',
 		index: '3',
 		title: '校车',
 		permiss: '4',
@@ -90,15 +90,16 @@ const items = [
 				title: '路径管理',
 				permiss: '6'
 			},
-			{
-				index: '/icon',
-				title: '车辆运行信息',
-				permiss: '7',
-			}
 		]
 	},
+  {
+    icon:'PieChart',
+    index: '/icon',
+    title: '车辆运行信息',
+    permiss: '7'
+  },
 	{
-		icon: 'DocumentCopy',
+		icon: 'Edit',
 		index: '/upload',
 		title: '订单信息管理',
 		permiss: '8'

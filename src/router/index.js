@@ -76,6 +76,14 @@ const routes = [
                 },
                 component: () => import("../views/permission.vue")
             }, {
+                path: "/icon",
+                name: 'icon',
+                meta: {
+                    title: '车辆运行信息',
+                    permiss: '10'
+                },
+                component: () => import("../views/icon.vue")
+            },{
                 path: '/user',
                 name: 'user',
                 meta: {
