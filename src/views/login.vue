@@ -25,7 +25,25 @@
         <div class="login-btn">
           <el-button type="primary" @click="submitForm()">登录</el-button>
         </div>
-        <p class="login-tips">Tips : 没有账号点击注册账号。</p>
+        <p class="login-tips"> 没有账号?点击注测</p><el-button @click="register">注册账号</el-button>
+        <el-dialog title="注册账号" v-model="reg" width="30%">
+          <el-form  label-width="100px">
+            <el-form-item label="用户名：">
+              <el-input placeholder="请填写用户名"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-form  label-width="100px">
+            <el-form-item label="密码">
+              <el-input placeholder="请填写密码"></el-input>
+            </el-form-item>
+          </el-form>
+          <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="addVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="saveCreate">确 定</el-button>
+                </span>
+          </template>
+        </el-dialog>
       </el-form>
     </div>
   </div>
@@ -40,6 +58,8 @@ import {ElMessage} from 'element-plus';
 import {Lock, User} from '@element-plus/icons-vue';
 import {login} from "../api";
 
+
+const reg = ref(false);
 export default {
   setup() {
     const router = useRouter();
@@ -69,6 +89,10 @@ export default {
           }
         });
       });
+    };
+
+    const register = () => {
+      reg.value = true;
     };
     const tags = useTagsStore();
     tags.clearTags();
