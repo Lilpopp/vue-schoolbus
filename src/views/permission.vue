@@ -35,58 +35,42 @@ const data = [
 		id: '1',
 		label: '系统首页'
 	},
-	{
-		id: '2',
-		label: '1',
-		children: [
-			{
-				id: '1',
-				label: '编辑'
-			},
-			{
-				id: '16',
-				label: '删除'
-			}
-		]
-	},
-	{
-		id: '3',
-		label: '预约'
-	},
+  {
+    id:'2',
+    label:'用户管理'
+  },
+  {
+    id: '3',
+    label:'预约'
+  },
+
 	{
 		id: '4',
-		label: '2',
+		label: '用户管理',
 		children: [
 			{
 				id: '5',
-				label: '3'
+				label: '车辆管理'
 			},
 			{
 				id: '6',
-				label: '4'
+				label: '路径管理'
 			},
-			{
-				id: '7',
-				label: '5',
-				children: [
-					{
-						id: '8',
-						label: '6'
-					},
-					{
-						id: '9',
-						label: '7'
-					}
-				]
-			}
+      {
+        id: '7',
+        label: '车辆运行信息'
+      }
 		]
 	},
 
-	{
-		id: '10',
-		label: '8'
-	},
-];
+  {
+    id: '8',
+    label: '订单信息管理',
+  },
+			{
+				id: '9',
+				label: '权限管理',
+			},]
 
 const permiss = usePermissStore();
 

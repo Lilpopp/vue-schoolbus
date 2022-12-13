@@ -6,8 +6,8 @@ export const usePermissStore = defineStore('permiss', {
 		return {
 			key: keys ? JSON.parse(keys) : [],
 			defaultList:{
-				admin: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'],
-				user: ['1', '3']
+				admin: ['1', '2', '3', '4', '5', '6', '7', '8',/*9是一个权限管理页面，添加*/],
+				user: ['1', '3','7'],
 			}
 		};
 	},

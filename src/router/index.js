@@ -17,72 +17,71 @@ const routes = [
                     title: '系统首页',
                     permiss: '1'
                 },
-                component: () => import( /* webpackChunkName: "dashboard" */ "../views/dashboard.vue")
+                component: () => import("../views/dashboard.vue")
             }, {
                 path: "/table",
-                name: "basetable",
+                name: "admin",
                 meta: {
                     title: '用户管理',
                     permiss: '2'
                 },
-                component: () => import( /* webpackChunkName: "table" */ "../views/table.vue")
-            }, {
-                path: "/vehicle",
-                name: "bus",
-                meta: {
-                    title: '车辆',
-                    permiss: '3'
-                },
-                component: () => import( /* webpackChunkName: "form" */ "../views/vehicle.vue")
-            }, {
+                component: () => import("../views/table.vue")
+            },{
                 path: "/reserve",
                 name: "reserve",
                 meta: {
                     title: '预约',
-                    permiss: '4'
+                    permiss: '3'
                 },
-                component: () => import( /* webpackChunkName: "tabs" */ "../views/reserve.vue")
-            }, {
-                path: "/icon",
-                name: "icon",
+                component: () => import("../views/reserve.vue")
+            },  {
+                path: "/vehicle",
+                name: "vehicle",
                 meta: {
-                    title: '车辆运行信息',
+                    title: '车辆管理',
                     permiss: '5'
                 },
-                component: () => import( /* webpackChunkName: "tabs" */ "../views/icon.vue")
-            },
-            {
+                component: () => import("../views/vehicle.vue")
+            }, {
                 path: "/RouteTable",
-                name: "scheduleTable",
+                name: "RouteTable",
                 meta: {
                     title: '路径管理',
                     permiss: '6'
                 },
-                component: () => import( /* webpackChunkName: "upload" */ "../views/RouteTable.vue")
+                component: () => import("../views/RouteTable.vue")
+            },{
+                path: "/icon",
+                name: "icon",
+                meta: {
+                    title: '车辆运行信息',
+                    permiss: '7'
+                },
+                component: () => import("../views/icon.vue")
             },
             {
                 path: "/upload",
                 name: "upload",
                 meta: {
-                    title: '线路',
-                    permiss: '7'
+                    title: '订单信息管理',
+                    permiss: '8'
                 },
-                component: () => import( /* webpackChunkName: "upload" */ "../views/upload.vue")
+                component: () => import("../views/upload.vue")
             }, {
                 path: "/permission",
                 name: "permission",
                 meta: {
                     title: '权限管理',
-                    permiss: '8'
+                    permiss: '9'
                 },
-                component: () => import( /* webpackChunkName: "permission" */ "../views/permission.vue")
+                component: () => import("../views/permission.vue")
             }, {
                 path: '/user',
                 name: 'user',
                 meta: {
                     title: '个人中心'
                 },
-                component: () => import(/* webpackChunkName: "user" */ '../views/user.vue')
+                component: () => import('../views/user.vue')
             },
         ]
     }, {
@@ -91,7 +90,7 @@ const routes = [
         meta: {
             title: '登录'
         },
-        component: () => import( /* webpackChunkName: "login" */ "../views/login.vue")
+        component: () => import("../views/login.vue")
     },
 ];
 const router = createRouter({
