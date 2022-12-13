@@ -69,29 +69,27 @@ export const findUser = (pageNum, pageSize, userName) => {
  * 校车模块
  */
 //添加校车
-export const addBus = (busName, busPrice, busAllNum) => {
+export const addBus = (busName, busAllNum) => {
     return request({
         dataType: "json",
         url: path.bus + "/add",
         method: 'post',
         data: {
             "bus_name": busName,
-            "bus_price": busPrice,
             "bus_all_num": busAllNum
         }
     });
 }
 //修改校车
-export const changeBus = (busId, busName, busState, busPrice, busAllNum, busNum) => {
+export const changeBus = (busId, busName, busState, busAllNum, busNum) => {
     return request({
         dataType: "json",
         url: path.bus + "/change",
         method: 'post',
         data: {
-            "bus_id": busName,
-            "bus_name": busPrice,
-            "bus_state": busAllNum,
-            "bus_price": busPrice,
+            "bus_id": busId,
+            "bus_name": busName,
+            "bus_state": busState,
             "bus_all_num": busAllNum,
             "bus_num": busNum
         }
@@ -145,7 +143,7 @@ export const addRoute = (beginSite, endSite, pathwaySite) => {
     });
 }
 //获取路径 startSite,endSite为空就是不搜索
-export const allRoute = (pageNum, pageSize, startSite, endSite) => {
+export const allRoute = (pageNum, pageSize, beginSite, endSite) => {
     return request({
         dataType: "json",
         url: path.route + "/all",
@@ -153,7 +151,7 @@ export const allRoute = (pageNum, pageSize, startSite, endSite) => {
         data: {
             "page_num": pageNum,
             "page_size": pageSize,
-            "start_site": startSite,
+            "begin_site": beginSite,
             "end_site": endSite
         }
     });
@@ -187,7 +185,7 @@ export const deleteRoute = (routeId) => {
  * 发车线路/正在运行车辆线路 模块
  */
 //添加发车线路
-export const addSchedule = (beginSite, endSite, routeId, beginTime, busId) => {
+export const addSchedule = (beginSite, endSite, routeId, beginTime, busId, schedulePrice) => {
     return request({
         dataType: "json",
         url: path.schedule + "/add",
@@ -197,12 +195,13 @@ export const addSchedule = (beginSite, endSite, routeId, beginTime, busId) => {
             "end_site": endSite,
             "route_id": routeId,
             "begin_time": beginTime,
-            "bus_id": busId
+            "bus_id": busId,
+            "schedule_price": schedulePrice
         }
     });
 }
 //改变发车路线
-export const changeSchedule = (scheduleId, beginSite, endSite, routeId, beginTime, busId) => {
+export const changeSchedule = (scheduleId, beginSite, endSite, routeId, beginTime, busId, schedulePrice) => {
     return request({
         dataType: "json",
         url: path.schedule + "/change",
@@ -213,7 +212,8 @@ export const changeSchedule = (scheduleId, beginSite, endSite, routeId, beginTim
             "end_site": endSite,
             "route_id": routeId,
             "begin_time": beginTime,
-            "bus_id": busId
+            "bus_id": busId,
+            "schedule_price": schedulePrice
         }
     });
 }

@@ -55,7 +55,7 @@ const routes = [
                 path: "/RouteTable",
                 name: "scheduleTable",
                 meta: {
-                    title: '线路',
+                    title: '路径管理',
                     permiss: '6'
                 },
                 component: () => import( /* webpackChunkName: "upload" */ "../views/RouteTable.vue")
