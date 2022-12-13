@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-login">
-      <div class="ms-title">校车调度 系统</div>
+      <div class="ms-title">校车调度系统</div>
       <el-form :model="param" :rules="rules" ref="loginForm" label-width="0px" class="ms-content">
         <el-form-item prop="username">
           <el-input v-model="param.username" placeholder="username">
@@ -25,21 +25,36 @@
         <div class="login-btn">
           <el-button type="primary" @click="submitForm()">登录</el-button>
         </div>
-        <p class="login-tips"> 没有账号?点击注测</p><el-button @click="register">注册账号</el-button>
+        <p class="login-tips"> 没有账号?点击注测</p>
+        <el-button @click="reg = true">注册账号</el-button>
         <el-dialog title="注册账号" v-model="reg" width="30%">
-          <el-form  label-width="100px">
+          <el-form label-width="100px">
             <el-form-item label="用户名：">
-              <el-input placeholder="请填写用户名"></el-input>
+              <el-input v-model="regFrom.username" placeholder="请填写用户名"></el-input>
             </el-form-item>
           </el-form>
-          <el-form  label-width="100px">
+          <el-form label-width="100px">
             <el-form-item label="密码">
-              <el-input placeholder="请填写密码"></el-input>
+              <el-input v-model="regFrom.password" placeholder="请填写密码"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-form label-width="100px">
+            <el-form-item label="性别">
+              <el-select v-model="regFrom.sex" placeholder="请选择性别">
+                <el-option value="男"/>
+                <el-option value="女"/>
+              </el-select>
+
+            </el-form-item>
+          </el-form>
+          <el-form label-width="100px">
+            <el-form-item label="电话">
+              <el-input v-model="regFrom.phone" placeholder="请填写电话号码"></el-input>
             </el-form-item>
           </el-form>
           <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="addVisible = false">取 消</el-button>
+                    <el-button @click="reg = false">取 消</el-button>
                     <el-button type="primary" @click="saveCreate">确 定</el-button>
                 </span>
           </template>
@@ -56,10 +71,16 @@ import {usePermissStore} from '../store/permiss';
 import {useRouter} from 'vue-router';
 import {ElMessage} from 'element-plus';
 import {Lock, User} from '@element-plus/icons-vue';
-import {login} from "../api";
+import {login, register} from "../api";
 
 
 const reg = ref(false);
+const regFrom = reactive({
+  username: "",
+  password: "",
+  sex: "",
+  phone: "",
+});
 export default {
   setup() {
     const router = useRouter();
@@ -71,6 +92,18 @@ export default {
       username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
       password: [{required: true, message: '请输入密码', trigger: 'blur'}]
     };
+    const addRules = reactive({
+      beginSite: [
+        {required: true, message: '请输入排班！', trigger: 'blur'},
+        {min: 2, max: 20, message: '名称长度应介于2到20之间', trigger: 'blur'},
+        {type: 'string', message: '请输入汉字！', trigger: 'blur'},
+      ],
+      endSite: [
+        {required: true, message: '请输入排班！', trigger: 'blur'},
+        {min: 2, max: 20, message: '名称长度应介于2到20之间', trigger: 'blur'},
+        {type: 'string', message: '请输入汉字！', trigger: 'blur'},
+      ],
+    })
     const loginForm = ref()
     const permiss = usePermissStore();
     const submitForm = () => {
@@ -79,7 +112,7 @@ export default {
           if (res.data.code === 0) {
             ElMessage.success('登录成功');
             localStorage.setItem('ms_username', param.username);
-            localStorage.setItem('token',res.data.data.token);
+            localStorage.setItem('token', res.data.data.token);
             const keys = permiss.defaultList[param.username === 'admin' ? 'admin' : 'user'];
             permiss.handleSet(keys);
             localStorage.setItem('ms_keys', JSON.stringify(keys));
@@ -90,17 +123,28 @@ export default {
         });
       });
     };
-
-    const register = () => {
-      reg.value = true;
-    };
+    const saveCreate = () => {
+      reg.value = false
+      register(regFrom.username,regFrom.password,regFrom.sex,regFrom.phone).then(res =>{
+        if (res.data.code === 0){
+          ElMessage.success("注册成功")
+        }else{
+          ElMessage.error("注册失败"+res.data.msg)
+        }
+      })
+    }
     const tags = useTagsStore();
     tags.clearTags();
     return {
       param,
       rules,
       loginForm,
+      reg,
+      regFrom,
+      addRules,
+      saveCreate,
       submitForm,
+      register,
       User,
       Lock
     };
