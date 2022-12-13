@@ -55,9 +55,9 @@
 
 <script setup name="basetable">
 import {ref, reactive} from 'vue';
-import {ElMessage, ElMessageBox} from 'element-plus';
-import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
-import {fetchData, findUser, userChange} from '../api/index';
+import {ElMessage} from 'element-plus';
+import {Edit} from '@element-plus/icons-vue';
+import {findUser, userChange} from '../api/index';
 
 const query = reactive({
   sex: '',
@@ -107,7 +107,7 @@ const handleEdit = (index, row) => {
   editVisible.value = true;
 };
 const saveEdit = () => {
-  userChange("", form.avatar, form.phone,"").then(res => {
+  userChange("", form.avatar, form.phone, "").then(res => {
     if (res.data.code === 0) {
       ElMessage.success(`修改第 ${idx + 1} 行成功`);
       if (form.phone !== "") {

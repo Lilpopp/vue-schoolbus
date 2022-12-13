@@ -25,8 +25,9 @@
         <div class="login-btn">
           <el-button type="primary" @click="submitForm()">登录</el-button>
         </div>
-        <p class="login-tips"> 没有账号?点击注测</p>
-        <el-button @click="reg = true">注册账号</el-button>
+        <div class="login-btn">
+          <el-button @click="reg = true">没有账号？点击注册账号</el-button>
+        </div>
         <el-dialog title="注册账号" v-model="reg" width="30%">
           <el-form label-width="100px">
             <el-form-item label="用户名：">

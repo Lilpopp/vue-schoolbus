@@ -169,13 +169,6 @@ export default {
             }
           })
         };
-
-    // 添加排班数据
-    const addScheduleData = (data) => {
-      insertData(data, "/schedule/createSchedule").then((res) => {
-        console.log(res.data);
-      });
-    }
     // 更新排班数据
     const updateScheduleData = (data) => {
       changeRoute(data.routeId, data.rBeginSite, data.rEndSite, data.rPathwaySite).then(res => {
