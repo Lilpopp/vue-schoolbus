@@ -12,18 +12,18 @@
     <div class="container">
       <!-- 标题工具栏 -->
       <div class="handle-box">
-        <el-select v-model="query.mode" placeholder="查询模式" class="handle-select mr10">
+        <el-select v-model="query.mode" placeholder="查询" class="handle-select mr10">
           <el-option key="1" label="排班ID查询" value="id"></el-option>
           <el-option key="2" label="发车区间查询" value="location"></el-option>
-          <el-option key="3" label="始发站查询" value="startLocation"></el-option>
-          <el-option key="4" label="终点查询" value="endLocation"></el-option>
+          <el-option key="3" label="始发站查询" value="beginSite"></el-option>
+          <el-option key="4" label="终点查询" value="endSite"></el-option>
         </el-select>
         <el-input v-if="query.mode == 'id'" v-model="query.options" placeholder="参数" class="handle-input mr10"></el-input>
-        <el-select v-if="query.mode == 'location' ||query.mode == 'startLocation'" v-model="query.startLocation" placeholder="始发站" class="handle-select mr10">
-          <el-option v-for="campus in campusData" :key="campus.campusId" :label="campus.campusName" :value="campus.campusName" />
+        <el-select v-if="query.mode == 'location' ||query.mode == 'beginSite'" v-model="query.beginSite" placeholder="始发站" class="handle-select mr10">
+          <el-option v-for="route in routeData" :key="route.routeId" :label="route.beginSite" :value="route.beginSite"></el-option>
         </el-select>
-        <el-select v-if="query.mode == 'location' ||query.mode == 'endLocation'" v-model="query.endLocation" placeholder="终点站" class="handle-select mr10">
-          <el-option v-for="campus in campusData" :key="campus.campusId" :label="campus.campusName" :value="campus.campusName" />
+        <el-select v-if="query.mode =='location' ||query.mode =='endSite'" v-model="query.endSite" placeholder="终点站" class="handle-select mr10">
+          <el-option v-for="route in routeData" :key="route.routeId" :label="route.endSite" :value="route.endSite"></el-option>
         </el-select>
         <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
         <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
@@ -31,16 +31,10 @@
       <!-- 排班表单 -->
       <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="scheduleId" label="排班ID"  align="center"></el-table-column>
-        <el-table-column prop="startLocation" label="始发站" align="center"></el-table-column>
-        <el-table-column prop="endLocation" label="终点站" align="center"></el-table-column>
+        <el-table-column prop="beginSite" label="始发站" align="center"></el-table-column>
+        <el-table-column prop="endSite" label="终点站" align="center"></el-table-column>
         <el-table-column prop="routeId" label="路线ID" align="center"></el-table-column>
-        <el-table-column label="发车时间" align="center">
-          <template #default="scope">
-            <el-tag>
-              {{ scope.row.startTime }}
-            </el-tag>
-          </template>
-        </el-table-column>
+        <el-table-column prop="beginTime" label="发车时间" align="center"></el-table-column>
         <el-table-column prop="busId" label="车辆ID" align="center"></el-table-column>
         <!-- 操作栏 -->
         <el-table-column label="操作" width="180" align="center">
@@ -63,33 +57,30 @@
     <el-dialog title="添加排班" v-model="addVisible" width="30%">
       <el-form :model="ruleForm" ref="ruleFormRef" :rules="addRules" label-width="100px">
         <el-form-item label="排班ID：">
-          <el-input v-model="ruleForm.scheduleId" placeholder=""></el-input>
+          <el-input v-model="ruleForm.scheduleId" placeholder="输入排班ID"></el-input>
         </el-form-item>
         <el-form-item label="始发校区：">
-          <el-select v-model="ruleForm.startLocation" placeholder="始发校区" class="handle-select mr10">
-            <el-option v-for="data in campusData" :key="data.campusId" :label="data.campusName" :value="data.campusName" />
+          <el-select v-model="ruleForm.beginSite" placeholder="始发站" class="handle-select mr10">
+            <el-option v-for="beginSite in allSchedule" :key="beginSite.routeId" :label="allSchedule.beginSite" :value="allSchedule.beginSite" />
           </el-select>
         </el-form-item>
         <el-form-item label="终点校区：">
-          <el-select v-model="ruleForm.endLocation" placeholder="终点校区" class="handle-select mr10">
-            <el-option v-for="data in campusData" :key="data.campusId" :label="data.campusName" :value="data.campusName" />
+          <el-select v-model="ruleForm.endSite" placeholder="终点站" class="handle-select mr10">
+            <el-option v-for="endSite in allSchedule" :key="endSite.routeId" :label="allSchedule.endSite" :value="allSchedule.endSite" />
           </el-select>
         </el-form-item>
         <el-form-item label="路线ID：">
           <el-select v-model="ruleForm.routeId" placeholder="请选择路线号" class="handle-select mr10">
-            <el-option v-for="route in routeData" :key="route.routeId" :label="route.routeId" :value="route.routeId" />
+            <el-option v-for="routeId in allSchedule" :key="changeRoute.routeId" :label="changeRoute.routeId" :value="changeRoute.routeId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="车辆ID：">
+          <el-select v-model="ruleForm.busId" placeholder="车辆ID" class="handle-select mr10">
+            <el-option v-for="busId in changeBus" :key="busId" :label="busId" :value="busId" />
           </el-select>
         </el-form-item>
         <el-form-item label="发车时间：">
-          <el-time-select v-model="ruleForm.startTime" start="06:00" step="00:10" end="15:30" placeholder="Select time"/>
-        </el-form-item>
-        <el-form-item label="车辆ID：">
-          <el-select v-model="ruleForm.busId" placeholder="终点校区" class="handle-select mr10">
-            <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busName" :value="bus.busId" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="日期：">
-          <el-input v-model="ruleForm.dateInfo" placeholder="" disabled></el-input>
+          <el-input v-model="ruleForm.beginTime" placeholder="输入发车时间"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -106,17 +97,18 @@
 
 import { ref, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { getDataParam, insertData, deleteData, updateData } from "../api/index";
-
+import {getDataParam, insertData, deleteData, updateData, allBus} from "../api/index";
+import { changeSchedule,allSchedule,deleteSchedule} from"../api/index"
+import {addSchedule, changeBus, changeRoute} from "../api";
 export default {
   name: "scheduleTable",
+  methods: {changeBus, addSchedule, changeRoute, allSchedule},
   setup() {
     // 可视化 相关数据
     const addVisible = ref(false);
     const editVisible = ref(false);
     // data 相关数据
     const scheduleData = ref([]);
-    const campusData = ref([]);
     const routeData = ref([]);
     const busData = ref([]);
     const pageTotal = ref(0);
@@ -125,35 +117,34 @@ export default {
     // request 相关数据
     const path = "/schedule/querySchedule";
     const query = reactive({
-      mode:"id",
+      mode:"选择查询条件",
       options:"all",
-      startLocation:"",
-      endLocation:"",
+      beginSite:"",
+      endSite:"",
       pageIndex:1,
       pageSize:10,
 
     });
     // 表单
     const form = reactive({
-      scheduleId:"",
-      startLocation: "",
-      endLocation: "",
-      routeId: "",
-      startTime: "",
-      date: [],
-      busId: "",
-      dateInfo: [],
+      page_num: "",
+      page_size:"",
+      beginSite:"",
+      endsite:"",
+      routeId:"",
+      begintime:"",
+      busid:"",
+      scheduleprice:"",
     });
     // 规则校验表单
     const ruleForm = reactive({
       scheduleId:"",
-      startLocation: "",
-      endLocation: "",
+      beginSite: "",
+      endSite: "",
       routeId: "",
-      startTime: "",
+      beginTime: "",
       date: [],
       busId: "",
-      dateInfo: [],
     });
     const deleteParam = reactive({
       scheduleId:"",
@@ -166,67 +157,55 @@ export default {
       scheduleId: [
         { required: true, message: '请输入排班ID', trigger: 'blur' },
       ],
-
-      scheduleName: [
-        { required: true, message: '请输入排班！', trigger: 'blur' },
-        { min: 2, max: 20, message: '名称长度应介于2到20之间', trigger: 'blur' },
-        { type: 'string', message: '请输入汉字！', trigger: 'blur' },
-      ],
     })
 
     /** 定义方法 */
 
         // 获取表格数据
     const getFormData = () => {
-          if(query.mode != 'id') {
+          if(query.mode != '选择查询条件') {
             query.options = ""
           }
-          getDataParam(query,path).then((res) => {
+          allSchedule(pageNum, pageSize, beginSite, endSite, busName).then((res) => {
             console.log(res)
             scheduleData.value = changeData(res.data);
-            // scheduleData.value = res.data
+            scheduleData.value = res.data.data
             pageTotal.value = res.pageTotal || 10
           });
         };
-    // 获取校园数据
-    const getCampusData = () => {
-      getDataParam(query, "/campus/queryCampus").then((res) => {
-        console.log(res)
-        campusData.value = res.data
-        console.log(campusData.value)
-        pageTotal.value = res.pageTotal || 10
-      });
-    };
-    // 获取校园数据
+   //获取站点数据
     const getRouteData = () => {
-      getDataParam(query, "/route/queryRoute").then((res) => {
+      getDataParam(query, "/RouteTable/all").then((res) => {
         console.log(res)
         routeData.value = res.data
         pageTotal.value = res.pageTotal || 10
       });
     };
-    // 获取校园数据
+    // 获取车辆数据
     const getBusData = () => {
-      getDataParam(query, "/bus/queryBus").then((res) => {
+      allBus(query.pageIndex, query.pageSize, query.busName).then((res) => {
         console.log(res)
-        busData.value = res.data
-        pageTotal.value = res.pageTotal || 10
+        busData.value = res.data.data
+        pageTotal.value = res.data.pageTotal || 10
       });
     };
 
-
     // 添加排班数据
     const addScheduleData = (data) => {
-      insertData(data,"/schedule/createSchedule").then((res) => {
+      addSchedule(beginSite, endSite, routeId, beginTime, busId, schedulePrice).then((res) => {
         console.log(res.data);
       });
     }
     // 更新排班数据
     const updateScheduleData = (data) => {
-      updateData(data,"/reg/updateSchedule").then((res) => {
-        console.log(res.data)
-        // refresh;
-      });
+      changeSchedule(scheduleId, beginSite, endSite, routeId, beginTime, busId, schedulePrice).then((res) => {
+        if(res.data.code === 0){
+          ElMessage.success("修改成功")
+        }else{
+          ElMessage.error("修改失败"+res.data.msg)
+        }
+        getFormData();
+      })
     }
 
     // 删除排班数据
@@ -278,10 +257,10 @@ export default {
         type: "warning",
       })
           .then(() => {
-            deleteParam.scheduleId = row.scheduleId
-            deleteScheduleData(deleteParam);
+            deleteSchedule().scheduleId = row.scheduleId
+            deleteSchedule();
             ElMessage.success("删除成功");
-            getFormData();
+            allSchedule();
           })
           .catch(() => {});
     };
@@ -315,7 +294,7 @@ export default {
     };
     // setup时执行的函数
     getFormData();
-    getCampusData();
+    getRouteData();
     getRouteData();
     getBusData();
 
@@ -323,7 +302,6 @@ export default {
       value,
       query,
       scheduleData,
-      campusData,
       routeData,
       busData,
       pageTotal,
