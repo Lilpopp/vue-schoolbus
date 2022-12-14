@@ -46,7 +46,7 @@ const data = [
 
 	{
 		id: '4',
-		label: '用户管理',
+		label: '校车',
 		children: [
 			{
 				id: '5',
@@ -62,7 +62,10 @@ const data = [
       }
 		]
 	},
-
+  {
+    id: '10',
+    label: '车辆运行信息'
+  },
   {
     id: '8',
     label: '订单信息管理',
@@ -70,7 +73,8 @@ const data = [
 			{
 				id: '9',
 				label: '权限管理',
-			},]
+			},
+]
 
 const permiss = usePermissStore();
 
