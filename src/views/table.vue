@@ -13,13 +13,6 @@
         <el-table-column prop="userName" label="用户名"></el-table-column>
         <el-table-column prop="phone" label="手机号"></el-table-column>
         <el-table-column prop="avatar" label="性别"></el-table-column>
-        <el-table-column label="操作" width="220" align="center">
-          <template #default="scope">
-            <el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
-              修改用户信息
-            </el-button>
-          </template>
-        </el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination

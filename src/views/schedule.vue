@@ -40,7 +40,7 @@
         <!-- 操作栏 -->
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button v-if="isSuper" type="text" icon="el-icon-edit" @click="handleOrder(scope.$index, scope.row)">预定
+            <el-button v-if="isSuper === 'false'" type="text" icon="el-icon-edit" @click="handleOrder(scope.$index, scope.row)">预定
             </el-button>
             <el-button v-else type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
             </el-button>
@@ -149,8 +149,7 @@
               type="datetime"
               placeholder="选择日期"
               v-model="form.beginTime"
-              value-format="YYYY-MM-DD hh:mm"
-          />
+              value-format="YYYY-MM-DD hh:mm"/>
         </el-form-item>
       </el-form>
       <template #footer>
