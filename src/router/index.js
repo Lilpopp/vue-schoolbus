@@ -33,7 +33,7 @@ const routes = [
                     title: '预约',
                     permiss: '3'
                 },
-                component: () => import("../views/reserve.vue")
+                component: () => import("../views/order.vue")
             },  {
                 path: "/vehicle",
                 name: "vehicle",
@@ -41,7 +41,7 @@ const routes = [
                     title: '车辆管理',
                     permiss: '5'
                 },
-                component: () => import("../views/vehicle.vue")
+                component: () => import("../views/bus.vue")
             }, {
                 path: "/RouteTable",
                 name: "RouteTable",
@@ -49,15 +49,15 @@ const routes = [
                     title: '路径管理',
                     permiss: '6'
                 },
-                component: () => import("../views/RouteTable.vue")
+                component: () => import("../views/route.vue")
             },{
-                path: "/icon",
-                name: "icon",
+                path: "/schedule",
+                name: "schedule",
                 meta: {
                     title: '车辆运行信息',
                     permiss: '7'
                 },
-                component: () => import("../views/icon.vue")
+                component: () => import("../views/schedule.vue")
             }, {
                 path: "/permission",
                 name: "permission",
@@ -73,7 +73,7 @@ const routes = [
                     title: '车辆运行信息',
                     permiss: '10'
                 },
-                component: () => import("../views/icon.vue")
+                component: () => import("../views/schedule.vue")
             },{
                 path: '/user',
                 name: 'user',

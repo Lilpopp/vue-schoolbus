@@ -71,7 +71,7 @@
   </div>
 </template>
 
-<script setup name="user">
+<script setup>
 import {reactive, ref} from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';

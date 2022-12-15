@@ -53,7 +53,7 @@
   </div>
 </template>
 
-<script setup name="basetable">
+<script setup>
 import {ref, reactive} from 'vue';
 import {ElMessage} from 'element-plus';
 import {Edit} from '@element-plus/icons-vue';

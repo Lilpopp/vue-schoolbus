@@ -2,32 +2,6 @@
 
 import axios from "axios";
 
-const errorHandle = (status) => {
-    switch (status) {
-        case 400:
-            console.log("语义有误");
-            break;
-        case 401:
-            console.log("服务器认证失败");
-            break;
-        case 403:
-            console.log("服务器拒绝访问");
-            break;
-        case 404:
-            console.log("地址错误");
-            break;
-        case 500:
-            console.log("服务器遇到意外");
-            break;
-        case 502:
-            console.log("服务器无响应");
-            break;
-        default:
-            break;
-
-    }
-}
-
 // 创建一个属于自己的网络请求对象
 const instance = axios.create({
     // 网络请求的公共配置
@@ -59,8 +33,6 @@ instance.interceptors.response.use(
         return response;
     },
     function (error) {
-        // 对响应错误做点什么
-        errorHandle(error.status)
         return Promise.reject(error);
     }
 )
