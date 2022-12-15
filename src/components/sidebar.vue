@@ -99,12 +99,6 @@ const items = [
     permiss: '7'
   },
 	{
-		icon: 'Edit',
-		index: '/upload',
-		title: '订单信息管理',
-		permiss: '8'
-	},
-	{
     		icon: 'Warning',
     		index: '/permission',
     		title: '权限管理',

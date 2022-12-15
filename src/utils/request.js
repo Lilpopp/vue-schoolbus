@@ -43,7 +43,6 @@ instance.interceptors.request.use(
     // config 包含着网络请求的所有信息
     config => {
         if (localStorage.getItem("token")) {
-            console.log(localStorage.getItem("token"))
             config.headers['token'] = localStorage.token;
         }
         // post请求需要转换格式，要单独处理。如果

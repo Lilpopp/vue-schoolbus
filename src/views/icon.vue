@@ -13,24 +13,22 @@
       <!-- 标题工具栏 -->
       <div class="handle-box">
         <el-select v-model="query.mode" placeholder="查询" class="handle-select mr10">
-          <el-option key="1" label="排班ID查询" value="id"></el-option>
-          <el-option key="2" label="发车区间查询" value="location"></el-option>
-          <el-option key="3" label="始发站查询" value="beginSite"></el-option>
-          <el-option key="4" label="终点查询" value="endSite"></el-option>
+          <el-option key="1" label="车辆名称查询" value="busName"></el-option>
+          <el-option key="2" label="始发站查询" value="beginSite"></el-option>
+          <el-option key="3" label="终点查询" value="endSite"></el-option>
         </el-select>
-        <el-input v-if="query.mode == 'id'" v-model="query.options" placeholder="参数" class="handle-input mr10"></el-input>
-        <el-select v-if="query.mode == 'location' ||query.mode == 'beginSite'" v-model="query.beginSite" placeholder="始发站" class="handle-select mr10">
-          <el-option v-for="route in routeData" :key="route.routeId" :label="route.beginSite" :value="route.beginSite"></el-option>
-        </el-select>
-        <el-select v-if="query.mode =='location' ||query.mode =='endSite'" v-model="query.endSite" placeholder="终点站" class="handle-select mr10">
-          <el-option v-for="route in routeData" :key="route.routeId" :label="route.endSite" :value="route.endSite"></el-option>
-        </el-select>
+        <el-input v-if="query.mode === 'busName'" v-model="query.busName" placeholder="参数"
+                  class="handle-input"></el-input>
+        <el-input v-if="query.mode === 'beginSite'" v-model="query.beginSite" placeholder="参数"
+                  class="handle-input"></el-input>
+        <el-input v-if="query.mode === 'endSite'" v-model="query.endSite" placeholder="参数"
+                  class="handle-input"></el-input>
         <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
         <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
       </div>
       <!-- 排班表单 -->
       <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="scheduleId" label="排班ID"  align="center"></el-table-column>
+        <el-table-column prop="scheduleId" label="排班ID" align="center"></el-table-column>
         <el-table-column prop="beginSite" label="始发站" align="center"></el-table-column>
         <el-table-column prop="endSite" label="终点站" align="center"></el-table-column>
         <el-table-column prop="routeId" label="路线ID" align="center"></el-table-column>
@@ -42,41 +40,46 @@
             <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
             </el-button>
             <el-button type="text" icon="el-icon-delete" class="red"
-                       @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                       @click="handleDelete(scope.$index, scope.row)">删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- 翻页器 -->
       <div class="pagination">
         <el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-                       :page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+                       :page-size="query.pageSize" :total="pageTotal"
+                       @current-change="handlePageChange"></el-pagination>
       </div>
     </div>
 
     <!-- 添加弹出框 有校验 -->
     <el-dialog title="添加排班" v-model="addVisible" width="30%">
       <el-form :model="ruleForm" ref="ruleFormRef" :rules="addRules" label-width="100px">
-        <el-form-item label="排班ID：">
-          <el-input v-model="ruleForm.scheduleId" placeholder="输入排班ID"></el-input>
-        </el-form-item>
-        <el-form-item label="始发校区：">
-          <el-select v-model="ruleForm.beginSite" placeholder="始发站" class="handle-select mr10">
-            <el-option v-for="beginSite in allSchedule" :key="beginSite.routeId" :label="allSchedule.beginSite" :value="allSchedule.beginSite" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="终点校区：">
-          <el-select v-model="ruleForm.endSite" placeholder="终点站" class="handle-select mr10">
-            <el-option v-for="endSite in allSchedule" :key="endSite.routeId" :label="allSchedule.endSite" :value="allSchedule.endSite" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="路线ID：">
           <el-select v-model="ruleForm.routeId" placeholder="请选择路线号" class="handle-select mr10">
-            <el-option v-for="routeId in allSchedule" :key="changeRoute.routeId" :label="changeRoute.routeId" :value="changeRoute.routeId" />
+            <el-option v-for="route in routeData"
+                       :key="route.routeId"
+                       :label="route.routeId+':'+route.rBeginSite+'->'+route.rEndSite"
+                       :value="route.routeId"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="车辆ID：">
+        <el-form-item label="始发站：">
+          <el-select v-model="ruleForm.beginSite" placeholder="始发站" class="handle-select">
+            <el-option v-for="site in (routeAllData.find(route => route.routeId === ruleForm.routeId))" :key="site"
+                       :label="site"
+                       :value="site"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="终点站：">
+          <el-select v-model="ruleForm.endSite" placeholder="终点站" class="handle-select mr10">
+            <el-option v-for="endSite in allSchedule" :key="endSite.routeId" :label="allSchedule.endSite"
+                       :value="allSchedule.endSite"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="车辆：">
           <el-select v-model="ruleForm.busId" placeholder="车辆ID" class="handle-select mr10">
-            <el-option v-for="busId in changeBus" :key="busId" :label="busId" :value="busId" />
+            <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busId+':'+bus.busName" :value="bus.busId"/>
           </el-select>
         </el-form-item>
         <el-form-item label="发车时间：">
@@ -95,14 +98,14 @@
 
 <script>
 
-import { ref, reactive } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import {getDataParam, insertData, deleteData, updateData, allBus} from "../api/index";
-import { changeSchedule,allSchedule,deleteSchedule} from"../api/index"
-import {addSchedule, changeBus, changeRoute} from "../api";
+import {ref, reactive} from "vue";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {getDataParam, deleteData, allBus} from "../api/index";
+import {changeSchedule, allSchedule, deleteSchedule} from "../api/index"
+import {addSchedule, changeBus, changeRoute, allRoute} from "../api";
+
 export default {
   name: "scheduleTable",
-  methods: {changeBus, addSchedule, changeRoute, allSchedule},
   setup() {
     // 可视化 相关数据
     const addVisible = ref(false);
@@ -110,44 +113,42 @@ export default {
     // data 相关数据
     const scheduleData = ref([]);
     const routeData = ref([]);
+    const routeAllData = ref([]);
     const busData = ref([]);
     const pageTotal = ref(0);
     const menu = ref([]);
     const value = ref();
-    // request 相关数据
-    const path = "/schedule/querySchedule";
     const query = reactive({
-      mode:"选择查询条件",
-      options:"all",
-      beginSite:"",
-      endSite:"",
-      pageIndex:1,
-      pageSize:10,
+      mode: "选择查询条件",
+      beginSite: "",
+      endSite: "",
+      busName: "",
+      pageIndex: 1,
+      pageSize: 10,
 
     });
     // 表单
     const form = reactive({
       page_num: "",
-      page_size:"",
-      beginSite:"",
-      endsite:"",
-      routeId:"",
-      begintime:"",
-      busid:"",
-      scheduleprice:"",
+      page_size: "",
+      beginSite: "",
+      endsite: "",
+      routeId: "",
+      begintime: "",
+      busid: "",
+      scheduleprice: "",
     });
     // 规则校验表单
     const ruleForm = reactive({
-      scheduleId:"",
+      scheduleId: "",
       beginSite: "",
       endSite: "",
       routeId: "",
       beginTime: "",
-      date: [],
       busId: "",
     });
     const deleteParam = reactive({
-      scheduleId:"",
+      scheduleId: "",
     })
     // 表单规则
     const ruleFormRef = ref()
@@ -155,7 +156,7 @@ export default {
 
     const addRules = reactive({
       scheduleId: [
-        { required: true, message: '请输入排班ID', trigger: 'blur' },
+        {required: true, message: '请输入排班ID', trigger: 'blur'},
       ],
     })
 
@@ -163,28 +164,33 @@ export default {
 
         // 获取表格数据
     const getFormData = () => {
-          if(query.mode != '选择查询条件') {
-            query.options = ""
-          }
-          allSchedule(pageNum, pageSize, beginSite, endSite, busName).then((res) => {
-            console.log(res)
-            scheduleData.value = changeData(res.data);
-            scheduleData.value = res.data.data
-            pageTotal.value = res.pageTotal || 10
+          allSchedule(query.pageIndex, query.pageSize, query.beginSite, query.endSite, query.busName).then((res) => {
+            if (res.data.code === 0) {
+              scheduleData.value = res.data.data
+              pageTotal.value = res.pageTotal || 10
+            } else {
+              ElMessage.error("查询失败" + res.data.msg)
+            }
           });
         };
-   //获取站点数据
+    //获取线路数据
     const getRouteData = () => {
-      getDataParam(query, "/RouteTable/all").then((res) => {
-        console.log(res)
-        routeData.value = res.data
-        pageTotal.value = res.pageTotal || 10
-      });
+      allRoute(1, 9999, "", "").then(res => {
+        if (res.data.code === 0) {
+          routeData.value = res.data.data
+          console.log(res.data.data)
+          res.data.data.forEach(data =>
+              routeAllData.value.push({routeId: data.routeId, sites:(data.rBeginSite+","+data.rPathwaySite+","+data.rEndSite).split(',')})
+          )
+          pageTotal.value = res.pageTotal || 10
+        } else {
+          ElMessage.error("查询失败" + res.data.msg)
+        }
+      })
     };
     // 获取车辆数据
     const getBusData = () => {
-      allBus(query.pageIndex, query.pageSize, query.busName).then((res) => {
-        console.log(res)
+      allBus(1, 9999, "").then((res) => {
         busData.value = res.data.data
         pageTotal.value = res.data.pageTotal || 10
       });
@@ -199,10 +205,10 @@ export default {
     // 更新排班数据
     const updateScheduleData = (data) => {
       changeSchedule(scheduleId, beginSite, endSite, routeId, beginTime, busId, schedulePrice).then((res) => {
-        if(res.data.code === 0){
+        if (res.data.code === 0) {
           ElMessage.success("修改成功")
-        }else{
-          ElMessage.error("修改失败"+res.data.msg)
+        } else {
+          ElMessage.error("修改失败" + res.data.msg)
         }
         getFormData();
       })
@@ -210,7 +216,7 @@ export default {
 
     // 删除排班数据
     const deleteScheduleData = (data) => {
-      deleteData(data,"/schedule/deleteSchedule").then((res) => {
+      deleteData(data, "/schedule/deleteSchedule").then((res) => {
         console.log(res.data)
         // refresh;
       });
@@ -262,7 +268,8 @@ export default {
             ElMessage.success("删除成功");
             allSchedule();
           })
-          .catch(() => {});
+          .catch(() => {
+          });
     };
 
     // 查询操作
@@ -274,7 +281,6 @@ export default {
     // 保存新增内容
     const saveCreate = () => {
       addVisible.value = false;
-      console.log(ruleForm)
       ruleForm.dateInfo = ruleForm.dateInfo.join(",")
       addScheduleData(ruleForm);
       ElMessage.success(`添加新用户成功`);
@@ -313,6 +319,7 @@ export default {
       deleteParam,
       addRules,
       menu,
+      routeAllData,
       handlePageChange,
       handleDelete,
       handleSearch,
@@ -338,16 +345,20 @@ export default {
   width: 300px;
   display: inline-block;
 }
+
 .table {
   width: 100%;
   font-size: 14px;
 }
+
 .red {
   color: #ff0000;
 }
+
 .mr10 {
   margin-right: 10px;
 }
+
 .table-td-thumb {
   display: block;
   margin: auto;

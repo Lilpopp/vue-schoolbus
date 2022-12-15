@@ -58,15 +58,6 @@ const routes = [
                     permiss: '7'
                 },
                 component: () => import("../views/icon.vue")
-            },
-            {
-                path: "/upload",
-                name: "upload",
-                meta: {
-                    title: '订单信息管理',
-                    permiss: '8'
-                },
-                component: () => import("../views/upload.vue")
             }, {
                 path: "/permission",
                 name: "permission",

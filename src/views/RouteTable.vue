@@ -97,7 +97,6 @@
 
 import {ref, reactive} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {getDataParam, insertData, deleteData, updateData} from "../api/index";
 import {addRoute, changeRoute, deleteRoute, allRoute} from "../api/index";
 
 export default {
