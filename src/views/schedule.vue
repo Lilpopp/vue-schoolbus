@@ -24,7 +24,7 @@
         <el-input v-if="query.mode === 'endSite'" v-model="query.endSite" placeholder="参数"
                   class="handle-input"></el-input>
         <el-button type="primary" plain @click="handleSearch">搜索</el-button>
-        <el-button v-if="isSuper" type="success" plain icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
+        <el-button type="success" plain @click="handleAdd">添加线路</el-button>
       </div>
       <!-- 排班表单 -->
       <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">

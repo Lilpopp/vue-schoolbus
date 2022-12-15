@@ -13,8 +13,8 @@
       <!-- 标题工具栏 -->
       <div class="handle-box">
         <el-input v-model="query.busName" placeholder="校车名称" class="handle-input"></el-input>
-        <el-button type="primary" plain icon="el-icon-search" @click="handleSearch">搜索</el-button>
-        <el-button type="success" plain icon="el-icon-plus" @click="handleAdd">添加校车</el-button>
+        <el-button type="primary" plain @click="handleSearch">搜索</el-button>
+        <el-button type="success" plain @click="handleAdd">添加线路</el-button>
       </div>
       <!-- 校车表单 -->
       <el-table :data="busData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
