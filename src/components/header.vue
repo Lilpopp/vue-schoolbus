@@ -56,6 +56,7 @@ onMounted(() => {
 const router = useRouter();
 const handleCommand = (command) => {
 	if (command === 'loginout') {
+    localStorage.removeItem('ms_keys');
 		localStorage.removeItem('username');
 		localStorage.removeItem('token');
 		localStorage.removeItem('is_super');
@@ -97,35 +98,6 @@ const handleCommand = (command) => {
 	height: 70px;
 	align-items: center;
 }
-.btn-fullscreen {
-	transform: rotate(45deg);
-	margin-right: 5px;
-	font-size: 24px;
-}
-.btn-bell,
-.btn-fullscreen {
-	position: relative;
-	width: 30px;
-	height: 30px;
-	text-align: center;
-	border-radius: 15px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-}
-.btn-bell-badge {
-	position: absolute;
-	right: 4px;
-	top: 0px;
-	width: 8px;
-	height: 8px;
-	border-radius: 4px;
-	background: #f56c6c;
-	color: #fff;
-}
-.btn-bell .el-icon-lx-notice {
-	color: #fff;
-}
 .user-name {
 	margin-left: 10px;
 }
@@ -137,8 +109,5 @@ const handleCommand = (command) => {
 	cursor: pointer;
 	display: flex;
 	align-items: center;
-}
-.el-dropdown-menu__item {
-	text-align: center;
 }
 </style>

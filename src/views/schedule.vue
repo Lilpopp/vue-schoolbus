@@ -24,7 +24,7 @@
         <el-input v-if="query.mode === 'endSite'" v-model="query.endSite" placeholder="参数"
                   class="handle-input"></el-input>
         <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-        <el-button v-if="!isSuper" type="success" icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
+        <el-button v-if="isSuper" type="success" icon="el-icon-plus" @click="handleAdd">添加排班</el-button>
       </div>
       <!-- 排班表单 -->
       <el-table :data="scheduleData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -44,7 +44,7 @@
             </el-button>
             <el-button v-else type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
             </el-button>
-            <el-button v-if="!isSuper" type="text" icon="el-icon-delete" class="red"
+            <el-button v-if="isSuper" type="text" icon="el-icon-delete" class="red"
                        @click="handleDelete(scope.$index, scope.row)">删除
             </el-button>
           </template>

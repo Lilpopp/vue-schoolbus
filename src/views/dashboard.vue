@@ -23,10 +23,15 @@ export default {
     setup() {
         const name = localStorage.getItem("username");
         const isSuper = localStorage.getItem("is_super");
-        const role = !isSuper ? "管理员" : "普通用户";
+        var role;
+        if (isSuper === 'true'){
+          role = '管理员'
+        }else{
+          role = '普通用户'
+        }
         return {
-            name,
-            role,
+          name,
+          role,
         };
     },
 };

@@ -114,10 +114,15 @@ export default {
             ElMessage.success('登录成功');
             localStorage.setItem('username', param.username);
             localStorage.setItem('token', res.data.data.token);
-            const data =  jwtDecode(res.data.data.token);
+            const data = jwtDecode(res.data.data.token);
             localStorage.setItem('is_super', data.is_super);
-            const keys = permiss.defaultList[!data.is_super ? 'admin' : 'user'];
-            permiss.handleSet(keys);
+            var user;
+            if (data.is_super === 'true'){
+              user = 'admin'
+            }else{
+              user = 'user'
+            }
+            const keys = permiss.defaultList[user];
             localStorage.setItem('ms_keys', JSON.stringify(keys));
             router.push('/');
           } else {
@@ -128,11 +133,11 @@ export default {
     };
     const saveCreate = () => {
       reg.value = false
-      register(regFrom.username,regFrom.password,regFrom.sex,regFrom.phone).then(res =>{
-        if (res.data.code === 0){
+      register(regFrom.username, regFrom.password, regFrom.sex, regFrom.phone).then(res => {
+        if (res.data.code === 0) {
           ElMessage.success("注册成功")
-        }else{
-          ElMessage.error("注册失败"+res.data.msg)
+        } else {
+          ElMessage.error("注册失败" + res.data.msg)
         }
       })
     }
