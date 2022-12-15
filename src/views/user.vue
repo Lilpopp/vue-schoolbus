@@ -80,7 +80,7 @@ import {findOneUser, userChange} from "../api";
 import {ElMessage} from "element-plus";
 import {comment} from "postcss";
 
-const name = localStorage.getItem('ms_username');
+const name = localStorage.getItem('username');
 const form = reactive({
   new: '',
   sex: '',

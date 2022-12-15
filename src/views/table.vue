@@ -72,7 +72,7 @@ const getData = () => {
   findUser(query.pageIndex, query.pageSize, "").then(res => {
     if (res.data.code === 0) {
       tableData.value = res.data.data
-      pageTotal.value = res.data.pageTotal || 50
+      pageTotal.value = ( res.data.pageTotal * query.pageSize ) || 10
       ElMessage.success(res.data.msg);
     } else {
       ElMessage.error(res.data.msg);

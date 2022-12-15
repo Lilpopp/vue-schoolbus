@@ -21,8 +21,9 @@ export default {
     name: "dashboard",
     components: {  },
     setup() {
-        const name = localStorage.getItem("ms_username");
-        const role = name === "admin" ? "管理员" : "普通用户";
+        const name = localStorage.getItem("username");
+        const isSuper = localStorage.getItem("is_super");
+        const role = !isSuper ? "管理员" : "普通用户";
         return {
             name,
             role,

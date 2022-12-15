@@ -34,12 +34,17 @@
         <el-table-column prop="routeId" label="路线ID" align="center"></el-table-column>
         <el-table-column prop="beginTime" label="发车时间" align="center"></el-table-column>
         <el-table-column prop="busId" label="车辆ID" align="center"></el-table-column>
+        <el-table-column prop="busName" label="车辆名称" align="center"></el-table-column>
+        <el-table-column prop="busAllNum" label="可搭载人数" align="center"></el-table-column>
+        <el-table-column prop="busNum" label="当前预约人数" align="center"></el-table-column>
         <!-- 操作栏 -->
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
+            <el-button v-if="isSuper" type="text" icon="el-icon-edit" @click="handleOrder(scope.$index, scope.row)">预定
             </el-button>
-            <el-button type="text" icon="el-icon-delete" class="red"
+            <el-button v-else type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
+            </el-button>
+            <el-button v-if="!isSuper" type="text" icon="el-icon-delete" class="red"
                        @click="handleDelete(scope.$index, scope.row)">删除
             </el-button>
           </template>
@@ -66,15 +71,18 @@
         </el-form-item>
         <el-form-item label="始发站：">
           <el-select v-model="ruleForm.beginSite" placeholder="始发站" class="handle-select">
-            <el-option v-for="site in (routeAllData.find(route => route.routeId === ruleForm.routeId))" :key="site"
+            <el-option v-for="site in (routeAllData.find(route => route.routeId === ruleForm.routeId))?.sites"
+                       :key="site"
                        :label="site"
                        :value="site"/>
           </el-select>
         </el-form-item>
         <el-form-item label="终点站：">
-          <el-select v-model="ruleForm.endSite" placeholder="终点站" class="handle-select mr10">
-            <el-option v-for="endSite in allSchedule" :key="endSite.routeId" :label="allSchedule.endSite"
-                       :value="allSchedule.endSite"/>
+          <el-select v-model="ruleForm.endSite" placeholder="终点站" class="handle-select">
+            <el-option v-for="site in (routeAllData.find(route => route.routeId === ruleForm.routeId))?.sites"
+                       :key="site"
+                       :label="site"
+                       :value="site"/>
           </el-select>
         </el-form-item>
         <el-form-item label="车辆：">
@@ -82,14 +90,73 @@
             <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busId+':'+bus.busName" :value="bus.busId"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="价钱：">
+          <el-input v-model="ruleForm.schedulePrice" placeholder="价钱" class="handle-input mr10"/>
+        </el-form-item>
         <el-form-item label="发车时间：">
-          <el-input v-model="ruleForm.beginTime" placeholder="输入发车时间"/>
+          <el-date-picker
+              type="datetime"
+              placeholder="选择日期"
+              v-model="ruleForm.beginTime"
+              value-format="YYYY-MM-DD hh:mm"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="addVisible = false">取 消</el-button>
                     <el-button type="primary" @click="saveCreate">确 定</el-button>
+                </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog title="编辑排班" v-model="editVisible" width="30%">
+      <el-form ref="ruleFormRef" :rules="addRules" label-width="100px">
+        <el-form-item label="路线ID：">
+          <el-select v-model="form.routeId" placeholder="请选择路线号" class="handle-select mr10">
+            <el-option v-for="route in routeData"
+                       :key="route.routeId"
+                       :label="route.routeId+':'+route.rBeginSite+'->'+route.rEndSite"
+                       :value="route.routeId"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="始发站：">
+          <el-select v-model="form.beginSite" placeholder="始发站" class="handle-select">
+            <el-option v-for="site in (routeAllData.find(route => route.routeId === form.routeId))?.sites"
+                       :key="site"
+                       :label="site"
+                       :value="site"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="终点站：">
+          <el-select v-model="form.endSite" placeholder="终点站" class="handle-select">
+            <el-option v-for="site in (routeAllData.find(route => route.routeId === form.routeId))?.sites"
+                       :key="site"
+                       :label="site"
+                       :value="site"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="车辆：">
+          <el-select v-model="form.busId" placeholder="车辆ID" class="handle-select mr10">
+            <el-option v-for="bus in busData" :key="bus.busId" :label="bus.busId+':'+bus.busName" :value="bus.busId"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="价钱：">
+          <el-input v-model="form.schedulePrice" placeholder="价钱" class="handle-input mr10"/>
+        </el-form-item>
+        <el-form-item label="发车时间：">
+          <el-date-picker
+              type="datetime"
+              placeholder="选择日期"
+              v-model="form.beginTime"
+              value-format="YYYY-MM-DD hh:mm"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="editVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="saveEdit">确 定</el-button>
                 </span>
       </template>
     </el-dialog>
@@ -100,7 +167,7 @@
 
 import {ref, reactive} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {getDataParam, deleteData, allBus} from "../api/index";
+import {getDataParam, deleteData, allBus, addOrder} from "../api/index";
 import {changeSchedule, allSchedule, deleteSchedule} from "../api/index"
 import {addSchedule, changeBus, changeRoute, allRoute} from "../api";
 
@@ -110,6 +177,7 @@ export default {
     // 可视化 相关数据
     const addVisible = ref(false);
     const editVisible = ref(false);
+    const isSuper = ref(localStorage.getItem("is_super"));
     // data 相关数据
     const scheduleData = ref([]);
     const routeData = ref([]);
@@ -132,11 +200,11 @@ export default {
       page_num: "",
       page_size: "",
       beginSite: "",
-      endsite: "",
+      endSite: "",
       routeId: "",
-      begintime: "",
-      busid: "",
-      scheduleprice: "",
+      beginTime: "",
+      busId: "",
+      schedulePrice: "",
     });
     // 规则校验表单
     const ruleForm = reactive({
@@ -146,6 +214,7 @@ export default {
       routeId: "",
       beginTime: "",
       busId: "",
+      schedulePrice: ""
     });
     const deleteParam = reactive({
       scheduleId: "",
@@ -162,12 +231,14 @@ export default {
 
     /** 定义方法 */
 
+
+
         // 获取表格数据
     const getFormData = () => {
           allSchedule(query.pageIndex, query.pageSize, query.beginSite, query.endSite, query.busName).then((res) => {
             if (res.data.code === 0) {
-              scheduleData.value = res.data.data
-              pageTotal.value = res.pageTotal || 10
+              scheduleData.value = res.data.data.sort((a,b) => { return a.scheduleId - b.scheduleId });
+              pageTotal.value = ( res.data.pageTotal * query.pageSize ) || 10
             } else {
               ElMessage.error("查询失败" + res.data.msg)
             }
@@ -180,9 +251,11 @@ export default {
           routeData.value = res.data.data
           console.log(res.data.data)
           res.data.data.forEach(data =>
-              routeAllData.value.push({routeId: data.routeId, sites:(data.rBeginSite+","+data.rPathwaySite+","+data.rEndSite).split(',')})
+              routeAllData.value.push({
+                routeId: data.routeId,
+                sites: (data.rBeginSite + "," + data.rPathwaySite + "," + data.rEndSite).split(',')
+              })
           )
-          pageTotal.value = res.pageTotal || 10
         } else {
           ElMessage.error("查询失败" + res.data.msg)
         }
@@ -192,19 +265,23 @@ export default {
     const getBusData = () => {
       allBus(1, 9999, "").then((res) => {
         busData.value = res.data.data
-        pageTotal.value = res.data.pageTotal || 10
       });
     };
 
     // 添加排班数据
     const addScheduleData = (data) => {
-      addSchedule(beginSite, endSite, routeId, beginTime, busId, schedulePrice).then((res) => {
-        console.log(res.data);
+      addSchedule(data.beginSite, data.endSite, data.routeId, data.beginTime, data.busId, data.schedulePrice).then((res) => {
+        if (res.data.code === 0) {
+          ElMessage.success("添加成功")
+        } else {
+          ElMessage.error("添加失败" + res.data.msg)
+        }
+        getFormData();
       });
     }
     // 更新排班数据
     const updateScheduleData = (data) => {
-      changeSchedule(scheduleId, beginSite, endSite, routeId, beginTime, busId, schedulePrice).then((res) => {
+      changeSchedule(data.scheduleId, data.beginSite, data.endSite, data.routeId, data.beginTime, data.busId, data.schedulePrice).then((res) => {
         if (res.data.code === 0) {
           ElMessage.success("修改成功")
         } else {
@@ -251,7 +328,6 @@ export default {
       idx = index;
       Object.keys(form).forEach((item) => {
         form[item] = row[item];
-        console.log(form[item]);
       });
       editVisible.value = true;
     };
@@ -263,10 +339,14 @@ export default {
         type: "warning",
       })
           .then(() => {
-            deleteSchedule().scheduleId = row.scheduleId
-            deleteSchedule();
-            ElMessage.success("删除成功");
-            allSchedule();
+            deleteSchedule(row.scheduleId).then(res => {
+              if (res.data.code === 0) {
+                ElMessage.success("删除成功")
+              } else {
+                ElMessage.error("删除失败" + res.data.msg)
+              }
+              getFormData();
+            })
           })
           .catch(() => {
           });
@@ -281,10 +361,7 @@ export default {
     // 保存新增内容
     const saveCreate = () => {
       addVisible.value = false;
-      ruleForm.dateInfo = ruleForm.dateInfo.join(",")
       addScheduleData(ruleForm);
-      ElMessage.success(`添加新用户成功`);
-      getFormData();
     }
 
     // 保存编辑内容
@@ -293,10 +370,27 @@ export default {
       Object.keys(form).forEach((item) => {
         scheduleData.value[idx][item] = form[item];
       });
-      console.log(scheduleData.value[idx])
       updateScheduleData(scheduleData.value[idx]);
-      ElMessage.success(`修改第 ${idx + 1} 行成功`);
-      getFormData();
+    };
+
+    //预定
+    const handleOrder = (index, row) =>{
+      ElMessageBox.confirm("确定要预定吗？", "提示", {
+        type: "info",
+      })
+          .then(() => {
+            console.log(row.scheduleId)
+            addOrder(row.scheduleId).then(res => {
+              if (res.data.code === 0) {
+                ElMessage.success("预定成功")
+              } else {
+                ElMessage.error("预定失败" + res.data.msg)
+              }
+              getFormData()
+            })
+          })
+          .catch(() => {
+          });
     };
     // setup时执行的函数
     getFormData();
@@ -319,6 +413,7 @@ export default {
       deleteParam,
       addRules,
       menu,
+      isSuper,
       routeAllData,
       handlePageChange,
       handleDelete,
@@ -326,6 +421,7 @@ export default {
       handleAdd,
       saveCreate,
       handleEdit,
+      handleOrder,
       saveEdit,
     };
   },

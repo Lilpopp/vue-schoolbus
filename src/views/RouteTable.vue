@@ -162,7 +162,7 @@ export default {
           allRoute(query.pageIndex, query.pageSize, query.beginSite, query.endSite).then(res => {
             if (res.data.code === 0) {
               scheduleData.value = res.data.data;
-              pageTotal.value = res.data.pageTotal || 10;
+              pageTotal.value = ( res.data.pageTotal * query.pageSize ) || 10;
             } else {
               ElMessage.error("获取失败" + res.data.msg)
             }

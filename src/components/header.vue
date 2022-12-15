@@ -37,7 +37,7 @@ import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 
-const username = localStorage.getItem('ms_username');
+const username = localStorage.getItem('username');
 const message= 2;
 
 const sidebar = useSidebarStore();
@@ -55,11 +55,12 @@ onMounted(() => {
 // 用户名下拉菜单选择事件
 const router = useRouter();
 const handleCommand = (command) => {
-	if (command == 'loginout') {
-		localStorage.removeItem('ms_username');
+	if (command === 'loginout') {
+		localStorage.removeItem('username');
 		localStorage.removeItem('token');
+		localStorage.removeItem('is_super');
 		router.push('/login');
-	} else if (command == 'user') {
+	} else if (command === 'user') {
 		router.push('/user');
 	}
 };

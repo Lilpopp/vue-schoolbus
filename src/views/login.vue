@@ -73,7 +73,7 @@ import {useRouter} from 'vue-router';
 import {ElMessage} from 'element-plus';
 import {Lock, User} from '@element-plus/icons-vue';
 import {login, register} from "../api";
-
+import jwtDecode from 'jwt-decode'
 
 const reg = ref(false);
 const regFrom = reactive({
@@ -112,9 +112,11 @@ export default {
         login(param.username, param.password).then((res) => {
           if (res.data.code === 0) {
             ElMessage.success('登录成功');
-            localStorage.setItem('ms_username', param.username);
+            localStorage.setItem('username', param.username);
             localStorage.setItem('token', res.data.data.token);
-            const keys = permiss.defaultList[param.username === 'admin' ? 'admin' : 'user'];
+            const data =  jwtDecode(res.data.data.token);
+            localStorage.setItem('is_super', data.is_super);
+            const keys = permiss.defaultList[!data.is_super ? 'admin' : 'user'];
             permiss.handleSet(keys);
             localStorage.setItem('ms_keys', JSON.stringify(keys));
             router.push('/');

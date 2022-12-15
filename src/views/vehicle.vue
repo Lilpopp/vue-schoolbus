@@ -162,7 +162,7 @@ export default {
           allBus(query.pageIndex, query.pageSize, query.busName).then((res) => {
             console.log(res)
             busData.value = res.data.data
-            pageTotal.value = res.data.pageTotal || 10
+            pageTotal.value = ( res.data.pageTotal * query.pageSize ) || 10
           });
         };
 

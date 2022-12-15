@@ -21,13 +21,14 @@
         <el-table-column prop="busId" label="车辆ID" align="center"></el-table-column>
         <el-table-column prop="busName" label="车辆名称" align="center"></el-table-column>
         <el-table-column prop="busAllNum" label="可搭载人数" align="center"></el-table-column>
-        <el-table-column prop="busNum" label="已预定" align="center"></el-table-column>
+        <el-table-column prop="busNum" label="当前预约人数" align="center"></el-table-column>
+        <el-table-column prop="orderStatus" label="是否已经支付" align="center"></el-table-column>
         <!-- 操作栏 -->
         <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button v-if="isPay === '未支付' " type="text" icon="el-icon-edit" @click="paySchedule(scope.$index, scope.row)">支付
+            <el-button v-if="scope.row.orderStatus === '未支付'" type="text" icon="el-icon-edit" @click="paySchedule(scope.$index, scope.row)">支付
             </el-button>
-            <el-button type="text" icon="el-icon-edit" @click="handleDelete(scope.$index, scope.row)">删除
+            <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -56,7 +57,6 @@ export default {
     const pageTotal = ref(0);
     const menu = ref([]);
     const value = ref();
-    const isPay = ref("未支付");
     // request 相关数据
     const query = reactive({
       pageIndex: 1,
@@ -70,9 +70,8 @@ export default {
     const getFormData = () => {
           allOrder(query.pageIndex, query.pageSize).then(res => {
             if (res.data.code === 0) {
-              isPay.value = res.data.data.isPay
               scheduleData.value = res.data.data;
-              pageTotal.value = res.data.pageTotal || 10
+              pageTotal.value = ( res.data.pageTotal * query.pageSize ) || 10
             } else {
               ElMessage.error("查询失败" + res.data.msg)
             }
@@ -124,7 +123,6 @@ export default {
       })
           .then(() => {
             deleteParam.orderId = row.orderId
-            console.log(deleteParam.orderId)
             pay(deleteParam);
           })
           .catch(() => {
@@ -142,7 +140,6 @@ export default {
       handlePageChange,
       handleDelete,
       paySchedule,
-      isPay,
     };
   },
 };
@@ -152,5 +149,8 @@ export default {
 .table {
   width: 100%;
   font-size: 14px;
+}
+.red {
+  color: #ff0000;
 }
 </style>
