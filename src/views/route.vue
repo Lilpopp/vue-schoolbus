@@ -295,7 +295,7 @@ export default {
 }
 
 .handle-input {
-  width: 300px;
+  width: 210px;
   display: inline-block;
 }
 
